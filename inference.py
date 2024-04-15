@@ -1,5 +1,6 @@
 import os
 import cv2
+import argparse
 import numpy as np
 from PIL import Image
 
@@ -121,18 +122,24 @@ def prepare_image(image):
 
 
 @torch.no_grad()
-def inference(model_path="model_final_diss.pth", input_path="./data", output_path="./results"):
+def inference(config):
+    output_path = config.output
+    input_path = config.input
+    weight = config.weight
+    model = config.model
+
+    output_path = os.path.join(output_path, model)
     os.makedirs(output_path, exist_ok=True)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     num_classes = 19
 
-    model = BiSeNet(num_classes, backbone_name='resnet18')
+    model = BiSeNet(num_classes, backbone_name=model)
     model.to(device)
 
-    if os.path.exists(model_path):
-        model.load_state_dict(torch.load(model_path)['model'])
+    if os.path.exists(weight):
+        model.load_state_dict(torch.load(weight))
     else:
-        raise ValueError(f"Weights not found from given path ({model_path})")
+        raise ValueError(f"Weights not found from given path ({weight})")
 
     if os.path.isfile(input_path):
         input_path = [input_path]
@@ -156,5 +163,16 @@ def inference(model_path="model_final_diss.pth", input_path="./data", output_pat
         )
 
 
+def parse_args():
+    parser = argparse.ArgumentParser(description="Face parsing inference")
+    parser.add_argument("--model", type=str, default="resnet18", help="model name, i.e resnet18, resnet34")
+    parser.add_argument("--weight", type=str, default="resnet18", help="path to trained model, i.e resnet18/34")
+    parser.add_argument("--input", type=str, default="./assets/images/", help="path to an image or a folder of images")
+    parser.add_argument("--output", type=str, default="./assets/results", help="path to save model outputs")
+
+    return parser.parse_args()
+
+
 if __name__ == "__main__":
-    inference(model_path="./weights/checkpoint_resnet18.pth", input_path="images/")
+    args = parse_args()
+    inference(config=args)

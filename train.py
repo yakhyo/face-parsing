@@ -140,7 +140,7 @@ def main(params):
     )
     start_epoch = 0
     if params.resume:
-        checkpoint = torch.load("./weights/checkpoint.pth", map_location="cpu", weights_only=True)
+        checkpoint = torch.load(f"./weights/{params.backbone}.ckpt", map_location="cpu", weights_only=True)
         model.load_state_dict(checkpoint["model"])
         optimizer.load_state_dict(checkpoint["optimizer"])
         lr_scheduler.load_state_dict(checkpoint["lr_scheduler"])
@@ -165,11 +165,11 @@ def main(params):
             "lr_scheduler": lr_scheduler.state_dict(),
             "epoch": epoch,
         }
-        torch.save(ckpt, f'./weights/checkpoint_{params.backbone}.pth')
+        torch.save(ckpt, f'./weights/{params.backbone}.ckpt')
 
     #  save final model
     state = model.state_dict()
-    torch.save(state, f'./weights/last_{params.backbone}.pth')
+    torch.save(state, f'./weights/{params.backbone}.pt')
 
 
 if __name__ == "__main__":
