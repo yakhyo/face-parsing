@@ -107,22 +107,25 @@ options:
 python inference.py --model resnet18 --weights ./weights/resnet18.pt --input assets/images --output assets/results
 ```
 
-<div align='center'>
 
+<div align='center'>
 <p>Style Images</p>
     <img src='./assets/images/1.jpg' height="200px">
     <img src='./assets/images/1112.jpg' height="200px">
     <img src='./assets/images/1309.jpg' height="200px">
     <img src='./assets/images/1321.jpg' height="200px">
 
-<p>Content Image</p>
-    <img src='images/content-images/amber.jpg' height="500px">
+<p>Backbone:ResNet34 </p>
+    <img src='./assets/results/resnet34/1.jpg' height="200px">
+    <img src='./assets/results/resnet34/1112.jpg' height="200px">
+    <img src='./assets/results/resnet34/1309.jpg' height="200px">
+    <img src='./assets/results/resnet34/1321.jpg' height="200px">
 
-<p>Output Images</p>
-   <img src='./assets/results/1.jpg' height="200px">
-    <img src='./assets/results/1112.jpg' height="200px">
-    <img src='./assets/results/1309.jpg' height="200px">
-    <img src='./assets/results/1321.jpg' height="200px">
+<p>Backbone:ResNet18 </p>
+    <img src='./assets/results/resnet18/1.jpg' height="200px">
+    <img src='./assets/results/resnet18/1112.jpg' height="200px">
+    <img src='./assets/results/resnet18/1309.jpg' height="200px">
+    <img src='./assets/results/resnet18/1321.jpg' height="200px">
 </div>
 
 ## Contributing
