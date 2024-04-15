@@ -24,8 +24,13 @@ Following updates have been made so far:
 
 - [x] Prepared more clear training code
 - [x] Updated backbone models, added resnet34 model (initially it has only resnet18)
-- [x] Trained model with different backbones are given [here](https://github.com/yakhyo/face-parsing/releases/tag/v0.0.1)
+- [x] Trained model with different backbones are
+  given [here](https://github.com/yakhyo/face-parsing/releases/tag/v0.0.1)
 - [x] Made several auxiliary updates to the code.
+
+### ToDo
+- [] torch to onnx convert
+- [] onnx inference
 
 ## Installation
 
@@ -106,7 +111,6 @@ options:
 ```
 python inference.py --model resnet18 --weights ./weights/resnet18.pt --input assets/images --output assets/results
 ```
-
 
 <div align='center'>
 <p>Model Inference Results</p>
