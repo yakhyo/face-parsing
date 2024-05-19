@@ -10,6 +10,7 @@ def torch2onnx_export(params):
 
     model = BiSeNet(num_classes, backbone_name=params.model)
     model.load_state_dict(torch.load(params.weight))
+    model.eval()
 
     onnx_model_path = params.weight.replace(".pt", ".onnx")
 
