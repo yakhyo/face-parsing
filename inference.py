@@ -146,7 +146,9 @@ def inference(config):
 
     model.eval()
     for filename in os.listdir(input_path):
-        image = Image.open(os.path.join(input_path, filename)).convert("RGB")
+        file_path = os.path.join(input_path, filename)
+        image = Image.open(file_path).convert("RGB")
+        print(f"Processing image: {file_path}")
 
         resized_image = image.resize((512, 512), resample=Image.BILINEAR)
         transformed_image = prepare_image(resized_image)
@@ -166,9 +168,14 @@ def inference(config):
 def parse_args():
     parser = argparse.ArgumentParser(description="Face parsing inference")
     parser.add_argument("--model", type=str, default="resnet18", help="model name, i.e resnet18, resnet34")
-    parser.add_argument("--weight", type=str, default="resnet18", help="path to trained model, i.e resnet18/34")
+    parser.add_argument(
+        "--weight",
+        type=str,
+        default="./weights/resnet18.pt",
+        help="path to trained model, i.e resnet18/34"
+    )
     parser.add_argument("--input", type=str, default="./assets/images/", help="path to an image or a folder of images")
-    parser.add_argument("--output", type=str, default="./assets/results", help="path to save model outputs")
+    parser.add_argument("--output", type=str, default="./assets/", help="path to save model outputs")
 
     return parser.parse_args()
 
