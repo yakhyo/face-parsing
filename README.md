@@ -27,10 +27,8 @@ Following updates have been made so far:
 - [x] Trained model with different backbones are
   given [here](https://github.com/yakhyo/face-parsing/releases/tag/v0.0.1)
 - [x] Made several auxiliary updates to the code.
-
-### ToDo
-- [] torch to onnx convert
-- [] onnx inference
+- [x] torch to onnx convert
+- [x] onnx inference
 
 ## Installation
 
@@ -90,9 +88,9 @@ options:
 python train.py
 ```
 
-### Inference
+### PyTorch Inference
 
-Inference Arguments:
+PyTorch Inference Arguments:
 
 ```
 usage: inference.py [-h] [--model MODEL] [--weight WEIGHT] [--input INPUT] [--output OUTPUT]
@@ -108,24 +106,45 @@ options:
 
 ```
 
+PyTorch inference example:
 ```
 python inference.py --model resnet18 --weights ./weights/resnet18.pt --input assets/images --output assets/results
 ```
 
+### ONNX Inference
+ONNX inference arguments:
+```
+usage: onnx_inference.py [-h] [--onnx-weight ONNX_WEIGHT] [--input INPUT] [--output OUTPUT]
+
+Face parsing ONNX inference
+
+options:
+  -h, --help            show this help message and exit
+  --onnx-weight ONNX_WEIGHT
+                        path to onnx model, default './weights/resnet18.onnx'
+  --input INPUT         path to an image or a folder of images
+  --output OUTPUT       path to save model outputs
+```
+
+ONNX inference example:
+```
+python onnx_inference.py --onnx-weight ./weights/resnet18.onnx --input ./assets/images --output ./assets/results/resnet18onnx
+```
+
 <div align='center'>
-<p>Model Inference Results</p>
+<p align='left'><b>Model Inference Results:</></p>
     <img src='./assets/images/1.jpg' height="200px">
     <img src='./assets/images/1112.jpg' height="200px">
     <img src='./assets/images/1309.jpg' height="200px">
     <img src='./assets/images/1321.jpg' height="200px">
 
-<p>Backbone:ResNet34 </p>
+<p align='left'>Backbone: <b>ResNet34</b> </p>
     <img src='./assets/results/resnet34/1.jpg' height="200px">
     <img src='./assets/results/resnet34/1112.jpg' height="200px">
     <img src='./assets/results/resnet34/1309.jpg' height="200px">
     <img src='./assets/results/resnet34/1321.jpg' height="200px">
 
-<p>Backbone:ResNet18 </p>
+<p align='left'>Backbone: <b>ResNet18</b> </p>
     <img src='./assets/results/resnet18/1.jpg' height="200px">
     <img src='./assets/results/resnet18/1112.jpg' height="200px">
     <img src='./assets/results/resnet18/1309.jpg' height="200px">
