@@ -84,7 +84,10 @@ class AttentionRefinementModule(nn.Module):
 
     def forward(self, x: Tensor) -> Tensor:
         feat = self.conv_block(x)
-        pool = F.avg_pool2d(feat, feat.size()[2:])
+        
+        feat_shape = [int(t) for t in feat.size()[2:]]
+        pool = F.avg_pool2d(feat, feat_shape)
+        # pool = F.avg_pool2d(feat, feat.size()[2:]) # gives error when converting to onnx due to dynamic size
 
         attention = self.attention(pool)
         out = torch.mul(feat, attention)
@@ -117,7 +120,10 @@ class ContextPath(nn.Module):
         h16, w16 = feat16.size()[2:]
         h32, w32 = feat32.size()[2:]
 
-        avg = F.avg_pool2d(feat32, feat32.size()[2:])
+        feat32_shape = [int(t) for t in feat32.size()[2:]]
+        avg = F.avg_pool2d(feat32, feat32_shape)
+        # avg = F.avg_pool2d(feat32, feat32.size()[2:]) # gives error when converting to onnx due to dynamic size
+        
         avg = self.conv_avg(avg)
         avg_up = F.interpolate(avg, (h32, w32), mode="nearest")
 
@@ -164,7 +170,11 @@ class FeatureFusionModule(nn.Module):
     def forward(self, fsp: Tensor, fcp: Tensor) -> Tensor:
         fcat = torch.cat([fsp, fcp], dim=1)
         feat = self.conv_block(fcat)
-        attention = F.avg_pool2d(feat, feat.size()[2:])
+        
+        feat_shape = [int(t) for t in feat.size()[2:]]
+        attention = F.avg_pool2d(feat, feat_shape)
+        # attention = F.avg_pool2d(feat, feat.size()[2:]) # gives error when converting to onnx due to dynamic size
+        
         attention = self.conv1(attention)
         attention = self.relu(attention)
         attention = self.conv2(attention)
