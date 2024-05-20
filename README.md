@@ -1,4 +1,4 @@
-# Face Parsing Model
+# BiSeNet: Bilateral Segmentation Network for Real-time Semantic Segmentation
 
 This is a face parsing model for high-precision facial feature segmentation built on top
 of [face-parsing.PyTorch](https://github.com/zllrunning/face-parsing.PyTorch). This model accurately segments various
