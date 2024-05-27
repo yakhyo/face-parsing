@@ -50,7 +50,7 @@ Following updates have been made so far:
 - [x] Prepared more clear training code
 - [x] Updated backbone models, added resnet34 model (initially it has only resnet18)
 - [x] Trained model with different backbones are
-  given [here](https://github.com/yakhyo/face-parsing/releases/tag/v0.0.1)
+  given [here: WEIGHTS](https://github.com/yakhyo/face-parsing/releases/tag/v0.0.1)
 - [x] Made several auxiliary updates to the code.
 - [x] torch to onnx convert
 - [x] onnx inference
