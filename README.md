@@ -5,24 +5,24 @@ This is a face parsing model for high-precision facial feature segmentation base
 <table>
   <tr>
     <td style="text-align: left;"><p>Input Images</p></td>
-    <td style="text-align: center;"><img src="./assets/images/1.jpg" height="200"></td>
-    <td style="text-align: center;"><img src="./assets/images/1112.jpg" height="200"></td>
-    <td style="text-align: center;"><img src="./assets/images/1309.jpg" height="200"></td>
-    <td style="text-align: center;"><img src="./assets/images/1321.jpg" height="200"></td>
+    <td style="text-align: center;"><img src="./assets/images/1.jpg" width="200"></td>
+    <td style="text-align: center;"><img src="./assets/images/1112.jpg" width="200"></td>
+    <td style="text-align: center;"><img src="./assets/images/1309.jpg" width="200"></td>
+    <td style="text-align: center;"><img src="./assets/images/1321.jpg" width="200"></td>
   </tr>
   <tr>
     <td style="text-align: left;"><p>ResNet34</p></td>
-    <td style="text-align: center;"><img src="./assets/results/resnet34/1.jpg" height="200"></td>
-    <td style="text-align: center;"><img src="./assets/results/resnet34/1112.jpg" height="200"></td>
-    <td style="text-align: center;"><img src="./assets/results/resnet34/1309.jpg" height="200"></td>
-    <td style="text-align: center;"><img src="./assets/results/resnet34/1321.jpg" height="200"></td>
+    <td style="text-align: center;"><img src="./assets/results/resnet34/1.jpg" width="200"></td>
+    <td style="text-align: center;"><img src="./assets/results/resnet34/1112.jpg" width="200"></td>
+    <td style="text-align: center;"><img src="./assets/results/resnet34/1309.jpg" width="200"></td>
+    <td style="text-align: center;"><img src="./assets/results/resnet34/1321.jpg" width="200"></td>
   </tr>
   <tr>
     <td style="text-align: left;"><p>ResNet18</p></td>
-    <td style="text-align: center;"><img src="./assets/results/resnet18/1.jpg" height="200"></td>
-    <td style="text-align: center;"><img src="./assets/results/resnet18/1112.jpg" height="200"></td>
-    <td style="text-align: center;"><img src="./assets/results/resnet18/1309.jpg" height="200"></td>
-    <td style="text-align: center;"><img src="./assets/results/resnet18/1321.jpg" height="200"></td>
+    <td style="text-align: center;"><img src="./assets/results/resnet18/1.jpg" width="200"></td>
+    <td style="text-align: center;"><img src="./assets/results/resnet18/1112.jpg" width="200"></td>
+    <td style="text-align: center;"><img src="./assets/results/resnet18/1309.jpg" width="200"></td>
+    <td style="text-align: center;"><img src="./assets/results/resnet18/1321.jpg" width="200"></td>
   </tr>
 </table>
 
