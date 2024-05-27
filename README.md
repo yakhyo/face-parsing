@@ -2,6 +2,34 @@
 
 This is a face parsing model for high-precision facial feature segmentation based on [BiSeNet: Bilateral Segmentation Network for Real-time Semantic Segmentation](https://arxiv.org/abs/1808.00897). This model accurately segments various facial components such as the eyes, nose, mouth, and the contour of the face from images. This repo provides a different training & inference code and new backbone model has been added.
 
+<table>
+  <tr>
+    <td style="text-align: left;"><p>Input Images</p></td>
+    <td style="text-align: center;"><img src="./assets/images/1.jpg" height="200"></td>
+    <td style="text-align: center;"><img src="./assets/images/1112.jpg" height="200"></td>
+    <td style="text-align: center;"><img src="./assets/images/1309.jpg" height="200"></td>
+    <td style="text-align: center;"><img src="./assets/images/1321.jpg" height="200"></td>
+  </tr>
+  <tr>
+    <td style="text-align: left;"><p>ResNet34</p></td>
+    <td style="text-align: center;"><img src="./assets/results/resnet34/1.jpg" height="200"></td>
+    <td style="text-align: center;"><img src="./assets/results/resnet34/1112.jpg" height="200"></td>
+    <td style="text-align: center;"><img src="./assets/results/resnet34/1309.jpg" height="200"></td>
+    <td style="text-align: center;"><img src="./assets/results/resnet34/1321.jpg" height="200"></td>
+  </tr>
+  <tr>
+    <td style="text-align: left;"><p>ResNet18</p></td>
+    <td style="text-align: center;"><img src="./assets/results/resnet18/1.jpg" height="200"></td>
+    <td style="text-align: center;"><img src="./assets/results/resnet18/1112.jpg" height="200"></td>
+    <td style="text-align: center;"><img src="./assets/results/resnet18/1309.jpg" height="200"></td>
+    <td style="text-align: center;"><img src="./assets/results/resnet18/1321.jpg" height="200"></td>
+  </tr>
+</table>
+
+
+
+
+
 ## Table of Contents
 
 - [Project Description](#project-description)
@@ -127,26 +155,6 @@ ONNX inference example:
 ```
 python onnx_inference.py --onnx-weight ./weights/resnet18.onnx --input ./assets/images --output ./assets/results/resnet18onnx
 ```
-
-<div align='center'>
-<p align='left'><b>Model Inference Results:</></p>
-    <img src='./assets/images/1.jpg' height="200px">
-    <img src='./assets/images/1112.jpg' height="200px">
-    <img src='./assets/images/1309.jpg' height="200px">
-    <img src='./assets/images/1321.jpg' height="200px">
-
-<p align='left'>Backbone: <b>ResNet34</b> </p>
-    <img src='./assets/results/resnet34/1.jpg' height="200px">
-    <img src='./assets/results/resnet34/1112.jpg' height="200px">
-    <img src='./assets/results/resnet34/1309.jpg' height="200px">
-    <img src='./assets/results/resnet34/1321.jpg' height="200px">
-
-<p align='left'>Backbone: <b>ResNet18</b> </p>
-    <img src='./assets/results/resnet18/1.jpg' height="200px">
-    <img src='./assets/results/resnet18/1112.jpg' height="200px">
-    <img src='./assets/results/resnet18/1309.jpg' height="200px">
-    <img src='./assets/results/resnet18/1321.jpg' height="200px">
-</div>
 
 ## Contributing
 
