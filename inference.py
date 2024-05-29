@@ -54,7 +54,7 @@ def inference(config):
         transformed_image = prepare_image(resized_image)
         image_batch = transformed_image.to(device)
 
-        output = model(image_batch)[0]  # zero batch
+        output = model(image_batch)[0]  # feat_out, feat_out16, feat_out32 -> use feat_out for inference only
         predicted_mask = output.squeeze(0).cpu().numpy().argmax(0)
 
         vis_parsing_maps(
