@@ -1,6 +1,7 @@
 # BiSeNet: Bilateral Segmentation Network for Real-time Semantic Segmentation
 
-![Downloads](https://img.shields.io/github/downloads/yakhyo/face-parsing/total)
+![Downloads](https://img.shields.io/github/downloads/yakhyo/face-parsing/total) [![GitHub Repository](https://img.shields.io/badge/GitHub-Repository-blue?logo=github)](https://github.com/yakhyo/face-parsing)
+
 
 This is a face parsing model for high-precision facial feature segmentation based on [BiSeNet: Bilateral Segmentation Network for Real-time Semantic Segmentation](https://arxiv.org/abs/1808.00897). This model accurately segments various facial components such as the eyes, nose, mouth, and the contour of the face from images. This repo provides a different training & inference code and new backbone model has been added.
 
