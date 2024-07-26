@@ -52,8 +52,7 @@ Following updates have been made so far:
 
 - [x] Prepared more clear training code
 - [x] Updated backbone models, added resnet34 model (initially it has only resnet18)
-- [x] Trained model with different backbones are
-  given [here: WEIGHTS](https://github.com/yakhyo/face-parsing/releases/tag/v0.0.1)
+- [x] Trained model weights/checkpoints with different backbones on [Github Release](https://github.com/yakhyo/face-parsing/releases/tag/v0.0.1)
 - [x] Made several auxiliary updates to the code.
 - [x] torch to onnx convert
 - [x] onnx inference
@@ -69,7 +68,15 @@ pip install -r requirements.txt
 ```
 
 ## Usage
-
+#### Download weights (click to download):
+| Model    | PT                                                                                   | ONNX                                                                                 |
+|----------|--------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------|
+| ResNet18 | [resnet18.pt](https://github.com/yakhyo/face-parsing/releases/download/v0.0.1/resnet18.pt) | [resnet18.onnx](https://github.com/yakhyo/face-parsing/releases/download/v0.0.1/resnet18.onnx) |
+| ResNet34 | [resnet34.pt](https://github.com/yakhyo/face-parsing/releases/download/v0.0.1/resnet34.pt) | [resnet34.onnx](https://github.com/yakhyo/face-parsing/releases/download/v0.0.1/resnet34.onnx) |
+#### Run below code to download all weights under `weights` folder
+```bash
+sh download.sh
+```
 ### Train
 
 Training Arguments:
