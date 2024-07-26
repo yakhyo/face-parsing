@@ -69,10 +69,12 @@ pip install -r requirements.txt
 
 ## Usage
 #### Download weights (click to download):
+
 | Model    | PT                                                                                   | ONNX                                                                                 |
 |----------|--------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------|
 | ResNet18 | [resnet18.pt](https://github.com/yakhyo/face-parsing/releases/download/v0.0.1/resnet18.pt) | [resnet18.onnx](https://github.com/yakhyo/face-parsing/releases/download/v0.0.1/resnet18.onnx) |
 | ResNet34 | [resnet34.pt](https://github.com/yakhyo/face-parsing/releases/download/v0.0.1/resnet34.pt) | [resnet34.onnx](https://github.com/yakhyo/face-parsing/releases/download/v0.0.1/resnet34.onnx) |
+
 #### Run below code to download all weights under `weights` folder
 ```bash
 sh download.sh
