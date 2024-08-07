@@ -1,3 +1,10 @@
+"""
+Author: Yakhyokhuja Valikhujaev
+Date: 2024-08-07
+Description: BiSeNet Model Implementation
+Copyright (c) 2024 Yakhyokhuja Valikhujaev. All rights reserved.
+"""
+
 import torch
 from torch import nn, Tensor
 import torch.nn.functional as F
