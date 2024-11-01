@@ -55,10 +55,12 @@ class HorizontalFlip:
                 7: 8,  # l -> r ear
                 8: 7,  # r -> l ear
             }
-            for src, dst in label_swaps.items():
-                np_target[np_target == src] = dst
+            np_target_flipped = np_target.copy()
 
-            target = Image.fromarray(np_target)
+            for src, dst in label_swaps.items():
+                np_target_flipped[np_target == src] = dst 
+
+            target = Image.fromarray(np_target_flipped)
 
             # flip image and image mask
             image = image.transpose(Image.FLIP_LEFT_RIGHT)
