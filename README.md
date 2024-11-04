@@ -181,6 +181,8 @@ The project is licensed under the [MIT license](https://opensource.org/license/m
 
 The project is built on top of [face-parsing.PyTorch](https://github.com/zllrunning/face-parsing.PyTorch). Model architecture and training strategy have been re-written for better performance. 
 
+<!--
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=yakhyo/face-parsing&type=Date)](https://star-history.com/#yakhyo/face-parsing&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=yakhyo/face-parsing&type=Date)](https://star-history.com/#yakhyo/face-parsing&Date) 
+-->
