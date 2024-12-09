@@ -180,6 +180,20 @@ or open issues to suggest features or report bugs.
 
 The project is licensed under the [MIT license](https://opensource.org/license/mit/).
 
+## Citation
+
+```
+@misc{face-parsing,
+  author = {Valikhujaev Yakhyokhuja},
+  title = {face-parsing},
+  year = {2024},
+  publisher = {GitHub},
+  howpublished = {\url{https://github.com/yakhyo/face-parsing}},
+  note = {GitHub repository}
+}
+
+```
+
 ## Reference
 
 The project is built on top of [face-parsing.PyTorch](https://github.com/zllrunning/face-parsing.PyTorch). Model architecture and training strategy have been re-written for better performance. 
