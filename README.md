@@ -5,7 +5,6 @@
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT) 
 [![GitHub Repository](https://img.shields.io/badge/GitHub-Repository-blue?logo=github)](https://github.com/yakhyo/face-parsing)
 
-
 This is a face parsing model for high-precision facial feature segmentation based on [BiSeNet: Bilateral Segmentation Network for Real-time Semantic Segmentation](https://arxiv.org/abs/1808.00897). This model accurately segments various facial components such as the eyes, nose, mouth, and the contour of the face from images. This repo provides a different training & inference code and new backbone model has been added.
 
 <table>
@@ -31,7 +30,6 @@ This is a face parsing model for high-precision facial feature segmentation base
     <td style="text-align: center;"><img src="./assets/results/resnet18/1321.jpg" width="200"></td>
   </tr>
 </table>
-
 
 
 
@@ -170,6 +168,10 @@ ONNX inference example:
 ```
 python onnx_inference.py --onnx-weight ./weights/resnet18.onnx --input ./assets/images --output ./assets/results/resnet18onnx
 ```
+
+## Acknowledged By
+
+- The [facefusion/facefusion](https://github.com/facefusion/facefusion) (with over 20k stars) uses the main face-parsing module from this repository.
 
 ## Contributing
 
