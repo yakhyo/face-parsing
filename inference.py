@@ -1,13 +1,13 @@
 import os
 import argparse
 from PIL import Image
-
+import numpy as np
 import torch
 import torchvision.transforms as transforms
+import cv2
 
 from models.bisenet import BiSeNet
 from utils.common import ATTRIBUTES, COLOR_LIST, letterbox, vis_parsing_maps
-
 
 def prepare_image(image):
     transform = transforms.Compose([
@@ -20,6 +20,24 @@ def prepare_image(image):
 
     return image_batch
 
+def apply_overlay(original_image, mask, alpha=0.5):
+    """
+    Apply a transparent overlay of the segmentation mask on the original image.
+    """
+    # Convert images to numpy arrays
+    image_np = np.array(original_image)
+    mask_np = np.array(mask)
+
+    # Define colors for the segmentation mask (Random colors for each label)
+    colors = np.random.randint(0, 255, (np.max(mask_np) + 1, 3), dtype=np.uint8)
+
+    # Apply color map
+    color_mask = colors[mask_np]
+
+    # Blend original image and mask
+    overlay = cv2.addWeighted(image_np, 1 - alpha, color_mask, alpha, 0)
+
+    return Image.fromarray(overlay)
 
 @torch.no_grad()
 def inference(config):
@@ -50,20 +68,36 @@ def inference(config):
         image = Image.open(file_path).convert("RGB")
         print(f"Processing image: {file_path}")
 
+        # Store original image resolution
+        original_size = image.size  # (width, height)
+
+        # Resize to 512x512 for model input
         resized_image = image.resize((512, 512), resample=Image.BILINEAR)
         transformed_image = prepare_image(resized_image)
         image_batch = transformed_image.to(device)
 
+        # Run inference
         output = model(image_batch)[0]  # feat_out, feat_out16, feat_out32 -> use feat_out for inference only
         predicted_mask = output.squeeze(0).cpu().numpy().argmax(0)
 
-        vis_parsing_maps(
-            resized_image,
-            predicted_mask,
-            save_image=True,
-            save_path=os.path.join(output_path, filename),
-        )
+        # Convert mask to PIL Image for resizing
+        mask_pil = Image.fromarray(predicted_mask.astype(np.uint8))
 
+        # Resize mask back to original image resolution
+        restored_mask = mask_pil.resize(original_size, resample=Image.NEAREST)
+
+        # Save the resized segmentation mask
+        # mask_save_path = os.path.join(output_path, f"{filename[:-4]}_mask.png")
+        # restored_mask.save(mask_save_path)
+        # print(f"Saved segmentation mask: {mask_save_path}")
+
+        # Generate overlayed image
+        overlayed_image = apply_overlay(image, restored_mask)
+
+        # Save the overlayed image
+        overlay_save_path = os.path.join(output_path, f"{filename[:-4]}_res.png")
+        overlayed_image.save(overlay_save_path)
+        print(f"Saved overlayed image: {overlay_save_path}")
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Face parsing inference")
@@ -78,7 +112,6 @@ def parse_args():
     parser.add_argument("--output", type=str, default="./assets/", help="path to save model outputs")
 
     return parser.parse_args()
-
 
 if __name__ == "__main__":
     args = parse_args()
