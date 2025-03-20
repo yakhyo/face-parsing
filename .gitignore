@@ -2,6 +2,7 @@
 *.pth
 *.pt
 *.ckpt
+*.onnx
 
 
 # Byte-compiled / optimized / DLL files
