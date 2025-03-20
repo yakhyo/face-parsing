@@ -49,7 +49,7 @@ detailed mask that highlights individual facial components, distinguishing betwe
 facial landmarks.
 
 ### Recent Updates:
-- Improved inference code for better performance and efficiency.
+- [2025-03-20] Improved inference code for better performance and efficiency.
 
 ### Updates So Far:
 - [x] Prepared more clear training code
