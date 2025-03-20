@@ -1,11 +1,15 @@
 # BiSeNet: Bilateral Segmentation Network for Real-time Semantic Segmentation
 
-![Downloads](https://img.shields.io/github/downloads/yakhyo/face-parsing/total) 
+![Downloads](https://img.shields.io/github/downloads/yakhyo/face-parsing/total)
 [![GitHub Repo stars](https://img.shields.io/github/stars/yakhyo/face-parsing)](https://github.com/yakhyo/face-parsing/stargazers)
-[![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT) 
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![GitHub Repository](https://img.shields.io/badge/GitHub-Repository-blue?logo=github)](https://github.com/yakhyo/face-parsing)
 
 This is a face parsing model for high-precision facial feature segmentation based on [BiSeNet: Bilateral Segmentation Network for Real-time Semantic Segmentation](https://arxiv.org/abs/1808.00897). This model accurately segments various facial components such as the eyes, nose, mouth, and the contour of the face from images. This repo provides a different training & inference code and new backbone model has been added.
+
+<div align="center">
+  <img src="assets/slideshow.gif">
+</div>
 
 <table>
   <tr>
@@ -31,8 +35,6 @@ This is a face parsing model for high-precision facial feature segmentation base
   </tr>
 </table>
 
-
-
 ## Table of Contents
 
 - [Project Description](#project-description)
@@ -49,9 +51,11 @@ detailed mask that highlights individual facial components, distinguishing betwe
 facial landmarks.
 
 ### Recent Updates:
+
 - [2025-03-20] Improved inference code for better performance and efficiency.
 
 ### Updates So Far:
+
 - [x] Prepared more clear training code
 - [x] Updated backbone models, added ResNet34 model (initially it had only ResNet18)
 - [x] Trained model weights/checkpoints with different backbones on [GitHub Release](https://github.com/yakhyo/face-parsing)
@@ -70,17 +74,14 @@ pip install -r requirements.txt
 ```
 
 ## Usage
+
 #### Download weights (click to download):
 
-| Model    | PT                                                                                   | ONNX                                                                                 |
-|----------|--------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------|
+| Model    | PT                                                                                         | ONNX                                                                                           |
+| -------- | ------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------- |
 | ResNet18 | [resnet18.pt](https://github.com/yakhyo/face-parsing/releases/download/v0.0.1/resnet18.pt) | [resnet18.onnx](https://github.com/yakhyo/face-parsing/releases/download/v0.0.1/resnet18.onnx) |
 | ResNet34 | [resnet34.pt](https://github.com/yakhyo/face-parsing/releases/download/v0.0.1/resnet34.pt) | [resnet34.onnx](https://github.com/yakhyo/face-parsing/releases/download/v0.0.1/resnet34.onnx) |
 
-#### Run below code to download all weights under `weights` folder
-```bash
-sh download.sh
-```
 ### Train
 
 Training Arguments:
@@ -146,12 +147,15 @@ options:
 ```
 
 PyTorch inference example:
+
 ```
 python inference.py --model resnet18 --weights ./weights/resnet18.pt --input assets/images --output assets/results
 ```
 
 ### ONNX Inference
+
 ONNX inference arguments:
+
 ```
 usage: onnx_inference.py [-h] --model MODEL [--input INPUT] [--output OUTPUT]
 
@@ -165,6 +169,7 @@ options:
 ```
 
 ONNX inference example:
+
 ```
 python onnx_inference.py --model ./weights/resnet18.onnx --input ./assets/images --output ./assets/results/resnet18onnx
 ```
@@ -198,10 +203,10 @@ The project is licensed under the [MIT license](https://opensource.org/license/m
 
 ## Reference
 
-The project is built on top of [face-parsing.PyTorch](https://github.com/zllrunning/face-parsing.PyTorch). Model architecture and training strategy have been re-written for better performance. 
+The project is built on top of [face-parsing.PyTorch](https://github.com/zllrunning/face-parsing.PyTorch). Model architecture and training strategy have been re-written for better performance.
 
 <!--
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=yakhyo/face-parsing&type=Date)](https://star-history.com/#yakhyo/face-parsing&Date) 
+[![Star History Chart](https://api.star-history.com/svg?repos=yakhyo/face-parsing&type=Date)](https://star-history.com/#yakhyo/face-parsing&Date)
 -->
