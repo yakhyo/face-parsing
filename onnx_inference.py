@@ -1,129 +1,205 @@
-import onnxruntime as ort
 import os
-import cv2
 import argparse
+import logging
+from typing import List, Tuple, Optional
+from pathlib import Path
+
 import numpy as np
 from PIL import Image
+from tqdm import tqdm
+import onnxruntime as ort
 
+import torch
 import torchvision.transforms as transforms
-from utils.common import ATTRIBUTES, COLOR_LIST, letterbox, vis_parsing_maps
 
-# 🎨 Define Fixed Colors for Each Label
-FIXED_COLORS = {
-    0: (0, 0, 0, 0),         # Background (Transparent)
-    1: (255, 0, 0, 128),     # Face (Red, Semi-Transparent)
-    2: (0, 255, 0, 128),     # Eyes (Green, Semi-Transparent)
-    3: (0, 0, 255, 128),     # Eyebrows (Blue, Semi-Transparent)
-    4: (255, 255, 0, 128),   # Nose (Yellow, Semi-Transparent)
-    5: (255, 165, 0, 128),   # Lips (Orange, Semi-Transparent)
-    6: (128, 0, 128, 128),   # Hair (Purple, Semi-Transparent)
-    7: (0, 255, 255, 128),   # Ears (Cyan, Semi-Transparent)
-    8: (128, 128, 128, 128), # Neck (Gray, Semi-Transparent)
-    9: (255, 20, 147, 128),  # Cheeks (Pink, Semi-Transparent)
-}
+from utils.common import vis_parsing_maps
 
-def prepare_image(image):
+# Set up logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
+logger = logging.getLogger(__name__)
+
+
+def prepare_image(image: Image.Image, input_size: Tuple[int, int] = (512, 512)) -> np.ndarray:
+    """
+    Prepare an image for ONNX inference by resizing and normalizing it.
+    
+    Args:
+        image: PIL Image to process
+        input_size: Target size for resizing
+        
+    Returns:
+        np.ndarray: Preprocessed image as numpy array ready for model input
+    """
+    # Resize the image
+    resized_image = image.resize(input_size, resample=Image.BILINEAR)
+    
+    # Define transformation pipeline
     transform = transforms.Compose([
         transforms.ToTensor(),
         transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225)),
     ])
 
-    image_tensor = transform(image)
+    # Apply transformations
+    image_tensor = transform(resized_image)
     image_batch = image_tensor.unsqueeze(0)
 
     return image_batch.numpy()
 
-def onnx_inference(onnx_session, image_batch):
-    input_name = onnx_session.get_inputs()[0].name
-    output_name = onnx_session.get_outputs()[0].name
-    output = onnx_session.run([output_name], {input_name: image_batch})[0]
-    return output
 
-def apply_overlay(original_image, mask, alpha=0.5):
+def load_onnx_model(onnx_path: str) -> ort.InferenceSession:
     """
-    Apply a transparent overlay of the segmentation mask on the original image.
-    Uses predefined colors for consistency.
+    Load and initialize the ONNX model.
+    
+    Args:
+        onnx_path: Path to the ONNX model file
+        
+    Returns:
+        ort.InferenceSession: Initialized ONNX inference session
     """
-    # Convert images to numpy arrays
-    image_np = np.array(original_image).astype(np.uint8)
-    mask_np = np.array(mask)
+    if not os.path.exists(onnx_path):
+        raise ValueError(f"ONNX model not found at path: {onnx_path}")
+    
+    # Create inference session - use GPU if available
+    providers = ['CUDAExecutionProvider', 'CPUExecutionProvider'] if ort.get_device() == 'GPU' else ['CPUExecutionProvider']
+    session = ort.InferenceSession(onnx_path, providers=providers)
+    
+    logger.info(f"ONNX model loaded successfully from {onnx_path}")
+    logger.info(f"Using execution provider: {session.get_providers()[0]}")
+    
+    return session
 
-    # Create RGBA (4-channel) mask with transparency
-    overlay_rgba = np.zeros((*mask_np.shape, 4), dtype=np.uint8)
 
-    # Assign predefined colors
-    for label, color in FIXED_COLORS.items():
-        overlay_rgba[mask_np == label] = color  # Assign fixed color
-
-    # Convert to PIL Image with transparency
-    overlay_image = Image.fromarray(overlay_rgba, mode="RGBA")
-
-    # Blend the overlay with the original image
-    original_rgba = original_image.convert("RGBA")  # Convert original image to RGBA
-    final_image = Image.alpha_composite(original_rgba, overlay_image)
-
-    return final_image
-
-def inference(config):
-    output_path = config.output
-    input_path = config.input
-    weight = config.onnx_weight
-
-    os.makedirs(output_path, exist_ok=True)
-
-    onnx_session = ort.InferenceSession(weight)
-
+def get_files_to_process(input_path: str) -> List[str]:
+    """
+    Get a list of image files to process based on the input path.
+    
+    Args:
+        input_path: Path to a single image file or directory of images
+        
+    Returns:
+        List[str]: List of file paths to process
+    """
     if os.path.isfile(input_path):
-        input_path = [input_path]
+        return [input_path]
+    
+    # Get all files from the directory
+    files = [os.path.join(input_path, f) for f in os.listdir(input_path)]
+    
+    # Filter for image files only
+    image_extensions = ('.png', '.jpg', '.jpeg', '.bmp', '.tiff')
+    return [f for f in files if os.path.isfile(f) and f.lower().endswith(image_extensions)]
 
-    for filename in os.listdir(input_path):
-        file_path = os.path.join(input_path, filename)
-        image = Image.open(file_path).convert("RGB")
-        print(f"Processing image: {file_path}")
 
-        # Store original image resolution
-        original_size = image.size  # (width, height)
+def inference_onnx(params: argparse.Namespace) -> None:
+    """
+    Run ONNX inference on images using the face parsing model.
+    
+    Args:
+        params: Configuration namespace containing required parameters
+    """
+    output_path = os.path.join(params.output, os.path.basename(params.model).split('.')[0])
+    os.makedirs(output_path, exist_ok=True)
+    
+    # Load the ONNX model
+    try:
+        session = load_onnx_model(params.model)
+        # Get model input name
+        input_name = session.get_inputs()[0].name
+        logger.info(f"Model input name: {input_name}")
+    except Exception as e:
+        logger.error(f"Failed to load ONNX model: {e}")
+        return
+    
+    # Get list of files to process
+    files_to_process = get_files_to_process(params.input)
+    logger.info(f"Found {len(files_to_process)} files to process")
+    
+    # Process each file
+    for file_path in tqdm(files_to_process, desc="Processing images"):
+        filename = os.path.basename(file_path)
+        save_path = os.path.join(output_path, filename)
+        
+        try:
+            # Load and process the image
+            image = Image.open(file_path).convert("RGB")
+            
+            # Store original image resolution
+            original_size = image.size  # (width, height)
+            
+            # Prepare image for inference
+            image_batch = prepare_image(image)
+            
+            # Run ONNX inference
+            outputs = session.run(None, {input_name: image_batch})
+            
+            # Get the first output (assuming it's the segmentation map)
+            output = outputs[0]
+            
+            # Convert to segmentation mask
+            predicted_mask = output.squeeze(0).argmax(0)
+            
+            # Convert mask to PIL Image for resizing
+            mask_pil = Image.fromarray(predicted_mask.astype(np.uint8))
+            
+            # Resize mask back to original image resolution
+            restored_mask = mask_pil.resize(original_size, resample=Image.NEAREST)
+            
+            # Convert back to numpy array
+            predicted_mask = np.array(restored_mask)
+            
+            # Visualize and save the results
+            vis_parsing_maps(
+                image,
+                predicted_mask,
+                save_image=True,
+                save_path=save_path,
+            )
+            
+        except Exception as e:
+            logger.error(f"Error processing {file_path}: {e}")
+            continue
+    
+    logger.info(f"Processing complete. Results saved to {output_path}")
 
-        # Resize to 512x512 for model input
-        resized_image = image.resize((512, 512), resample=Image.BILINEAR)
-        transformed_image = prepare_image(resized_image)
 
-        # Run inference
-        output = onnx_inference(onnx_session, transformed_image)
-        predicted_mask = output.squeeze(0).argmax(0)
-
-        # Convert mask to PIL Image for resizing
-        mask_pil = Image.fromarray(predicted_mask.astype(np.uint8))
-
-        # Resize mask back to original image resolution
-        restored_mask = mask_pil.resize(original_size, resample=Image.NEAREST)
-
-        # Save the resized segmentation mask
-        mask_save_path = os.path.join(output_path, f"{filename[:-4]}_mask.png")
-        restored_mask.save(mask_save_path)
-        print(f"Saved segmentation mask: {mask_save_path}")
-
-        # Generate overlayed image
-        overlayed_image = apply_overlay(image, restored_mask)
-
-        # Save the overlayed image
-        overlay_save_path = os.path.join(output_path, f"{filename[:-4]}_res.png")
-        overlayed_image.save(overlay_save_path)
-        print(f"Saved overlayed image: {overlay_save_path}")
-
-def parse_args():
-    parser = argparse.ArgumentParser(description="Face parsing ONNX inference")
+def parse_args() -> argparse.Namespace:
+    """
+    Parse and validate command line arguments.
+    
+    Returns:
+        argparse.Namespace: Validated command line arguments
+    """
+    parser = argparse.ArgumentParser(description="Face parsing inference with ONNX")
     parser.add_argument(
-        "--onnx-weight",
+        "--model",
         type=str,
-        default="./weights/resnet18.onnx",
-        help="path to onnx model, default './weights/resnet18.onnx'"
+        required=True,
+        help="path to ONNX model file"
     )
     parser.add_argument("--input", type=str, default="./assets/images/", help="path to an image or a folder of images")
-    parser.add_argument("--output", type=str, default="./assets/", help="path to save model outputs")
+    parser.add_argument("--output", type=str, default="./assets/results", help="path to save model outputs")
+    
+    args = parser.parse_args()
+    
+    # Validate arguments
+    if not os.path.exists(args.input):
+        raise ValueError(f"Input path does not exist: {args.input}")
+    
+    if not os.path.exists(args.model):
+        raise ValueError(f"ONNX model file does not exist: {args.model}")
+    
+    return args
 
-    return parser.parse_args()
+
+def main() -> None:
+    """Main entry point of the script."""
+    try:
+        args = parse_args()
+        inference_onnx(params=args)
+    except Exception as e:
+        logger.error(f"An error occurred: {e}")
+        raise
+
 
 if __name__ == "__main__":
-    args = parse_args()
-    inference(config=args)
+    main()

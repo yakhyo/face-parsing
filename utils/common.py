@@ -74,29 +74,3 @@ def vis_parsing_maps(image, segmentation_mask, save_image=False, save_path="resu
         cv2.imwrite(save_path, blended_image, [int(cv2.IMWRITE_JPEG_QUALITY), 100])
 
     return blended_image
-
-
-def letterbox(image, target_size, fill_color=(0, 0, 0)):
-    w, h = image.size
-
-    # calculate scale factor based on target aspect ratio
-    scale = min(target_size[0] / w, target_size[1] / h)
-
-    # new image dimensions based on scale
-    new_w = int(w * scale)
-    new_h = int(h * scale)
-
-    # resize the image with antialiasing for better quality
-    resized_image = image.resize((new_w, new_h), resample=Image.BILINEAR)
-
-    # calculate padding dimensions
-    pad_w = target_size[0] - new_w
-    pad_h = target_size[1] - new_h
-
-    # create a new image with target size and fill color
-    letterbox_image = Image.new("RGB", target_size, fill_color)
-
-    # paste the resized image at the center of the letterbox image
-    letterbox_image.paste(resized_image, (pad_w // 2, pad_h // 2))
-
-    return letterbox_image
