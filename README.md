@@ -151,7 +151,7 @@ options:
 PyTorch inference example:
 
 ```
-python inference.py --model resnet18 --weights ./weights/resnet18.pt --input assets/images --output assets/results
+python inference.py --model resnet18 --weight ./weights/resnet18.pt --input assets/images --output assets/results
 ```
 
 ### ONNX Inference
