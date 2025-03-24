@@ -1,4 +1,4 @@
-# BiSeNet: Bilateral Segmentation Network for Real-time Semantic Segmentation
+# BiSeNet: Bilateral Segmentation Network for Real-time Semantic Segmentation [Face Parsing]
 
 ![Downloads](https://img.shields.io/github/downloads/yakhyo/face-parsing/total)
 [![GitHub Repo stars](https://img.shields.io/github/stars/yakhyo/face-parsing)](https://github.com/yakhyo/face-parsing/stargazers)
