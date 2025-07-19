@@ -70,7 +70,6 @@ def vis_parsing_maps(image, segmentation_mask, save_image=False, save_path="resu
 
     # Save the result if required
     if save_image:
-        cv2.imwrite(save_path, segmentation_mask)
         cv2.imwrite(save_path, blended_image, [int(cv2.IMWRITE_JPEG_QUALITY), 100])
 
     return blended_image
