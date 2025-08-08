@@ -123,6 +123,8 @@ def inference(params: argparse.Namespace) -> None:
     # Process each file
     for file_path in tqdm(files_to_process, desc="Processing images"):
         filename = os.path.basename(file_path)
+        root_ext_pair = os.path.splitext(filename)
+        save_raw_path = os.path.join(output_path, root_ext_pair[0] + "_raw.png")
         save_path = os.path.join(output_path, filename)
 
         try:
@@ -144,6 +146,9 @@ def inference(params: argparse.Namespace) -> None:
 
             # Resize mask back to original image resolution
             restored_mask = mask_pil.resize(original_size, resample=Image.NEAREST)
+
+            # Save the raw mask
+            mask_pil.save(save_raw_path)
 
             # Convert back to numpy array
             predicted_mask = np.array(restored_mask)
