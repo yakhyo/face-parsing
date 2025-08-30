@@ -43,7 +43,14 @@ This is a face parsing model for high-precision facial feature segmentation base
 
 - [Project Description](#project-description)
 - [Installation](#installation)
+- [Dataset](#dataset)
+- [Model Performance](#model-performance)
 - [Usage](#usage)
+  - [Training](#training)
+  - [PyTorch Inference](#pytorch-inference)
+  - [ONNX Export](#onnx-export)
+  - [ONNX Inference](#onnx-inference)
+- [Project Structure](#project-structure)
 - [Contributing](#contributing)
 - [License](#license)
 
@@ -71,11 +78,37 @@ facial landmarks.
 
 To get started with the Face Parsing Model, clone this repository and install the required dependencies:
 
-```commandline
+```bash
 git clone https://github.com/yakhyo/face-parsing.git
-cd face-parsing-model
+cd face-parsing
 pip install -r requirements.txt
 ```
+
+## Dataset
+
+This model is designed to work with face parsing datasets. The expected dataset structure should be:
+
+```
+dataset/
+├── images/           # Input face images
+│   ├── image1.jpg
+│   ├── image2.jpg
+│   └── ...
+└── labels/           # Corresponding segmentation masks
+    ├── image1.png
+    ├── image2.png
+    └── ...
+```
+
+This model was trained on:
+- **CelebAMask-HQ**: High-quality face parsing dataset with 30,000 images
+
+## Model Performance
+
+| Model    | Parameters | Model Size |
+|----------|------------|-----------|
+| ResNet18 | ~11.2M     | ~43MB     |
+| ResNet34 | ~21.3M     | ~82MB     |
 
 ## Usage
 
@@ -86,7 +119,9 @@ pip install -r requirements.txt
 | ResNet18 | [resnet18.pt](https://github.com/yakhyo/face-parsing/releases/download/v0.0.1/resnet18.pt) | [resnet18.onnx](https://github.com/yakhyo/face-parsing/releases/download/v0.0.1/resnet18.onnx) |
 | ResNet34 | [resnet34.pt](https://github.com/yakhyo/face-parsing/releases/download/v0.0.1/resnet34.pt) | [resnet34.onnx](https://github.com/yakhyo/face-parsing/releases/download/v0.0.1/resnet34.onnx) |
 
-### Train
+### Training
+
+Before training, make sure you have prepared your dataset according to the [Dataset](#dataset) section.
 
 Training Arguments:
 
@@ -99,37 +134,45 @@ Argument Parser for Training Configuration
 options:
   -h, --help            show this help message and exit
   --num-classes NUM_CLASSES
-                        Number of classes in the dataset
+                        Number of classes in the dataset (default: 19)
   --batch-size BATCH_SIZE
-                        Batch size for training
+                        Batch size for training (default: 16)
   --num-workers NUM_WORKERS
-                        Number of workers for data loading
+                        Number of workers for data loading (default: 4)
   --image-size IMAGE_SIZE IMAGE_SIZE
-                        Size of input images
+                        Size of input images (default: 512 512)
   --data-root DATA_ROOT
                         Root directory of the dataset
-  --momentum MOMENTUM   Momentum for optimizer
+  --momentum MOMENTUM   Momentum for optimizer (default: 0.9)
   --weight-decay WEIGHT_DECAY
-                        Weight decay for optimizer
-  --lr-start LR_START   Initial learning rate
-  --max-iter MAX_ITER   Maximum number of iterations
-  --power POWER         Power for learning rate policy
+                        Weight decay for optimizer (default: 5e-4)
+  --lr-start LR_START   Initial learning rate (default: 1e-2)
+  --max-iter MAX_ITER   Maximum number of iterations (default: 80000)
+  --power POWER         Power for learning rate policy (default: 0.9)
   --lr-warmup-epochs LR_WARMUP_EPOCHS
-                        Number of warmup epochs
+                        Number of warmup epochs (default: 10)
   --warmup-start-lr WARMUP_START_LR
-                        Warmup starting learning rate
+                        Warmup starting learning rate (default: 1e-5)
   --score-thres SCORE_THRES
-                        Score threshold
-  --epochs EPOCHS       Number of epochs for training
-  --backbone BACKBONE   Backbone architecture
+                        Score threshold (default: 0.7)
+  --epochs EPOCHS       Number of epochs for training (default: 150)
+  --backbone BACKBONE   Backbone architecture (default: resnet18)
   --print-freq PRINT_FREQ
-                        Print frequency during training
+                        Print frequency during training (default: 10)
   --resume              Resume training from checkpoint
 
 ```
 
-```commandline
-python train.py
+Start training with default parameters:
+
+```bash
+python train.py --data-root /path/to/your/dataset
+```
+
+Custom training example:
+
+```bash
+python train.py --data-root /path/to/dataset --backbone resnet34 --batch-size 8 --epochs 200
 ```
 
 ### PyTorch Inference
@@ -150,11 +193,44 @@ options:
 
 ```
 
-PyTorch inference example:
+PyTorch inference examples:
+
+Single image:
+```bash
+python inference.py --model resnet18 --weight ./weights/resnet18.pt --input ./assets/images/1.jpg --output ./results
+```
+
+Batch processing:
+```bash
+python inference.py --model resnet18 --weight ./weights/resnet18.pt --input ./assets/images --output ./assets/results
+```
+
+### ONNX Export
+
+Convert PyTorch models to ONNX format for cross-platform deployment:
 
 ```
-python inference.py --model resnet18 --weight ./weights/resnet18.pt --input assets/images --output assets/results
+usage: onnx_export.py [-h] [--model MODEL] [--weight WEIGHT]
+
+Convert PyTorch model to ONNX format
+
+options:
+  -h, --help       show this help message and exit
+  --model MODEL    model name, i.e resnet18, resnet34 (default: resnet18)
+  --weight WEIGHT  path to trained PyTorch model (default: ./weights/resnet18.pt)
 ```
+
+Export examples:
+
+```bash
+# Export ResNet18 model
+python onnx_export.py --model resnet18 --weight ./weights/resnet18.pt
+
+# Export ResNet34 model  
+python onnx_export.py --model resnet34 --weight ./weights/resnet34.pt
+```
+
+This will create an ONNX file in the same directory as the PyTorch model (e.g., `resnet18.onnx`).
 
 ### ONNX Inference
 
@@ -174,13 +250,41 @@ options:
 
 ONNX inference example:
 
-```
+```bash
 python onnx_inference.py --model ./weights/resnet18.onnx --input ./assets/images --output ./assets/results/resnet18onnx
+```
+
+## Project Structure
+
+```
+face-parsing/
+├── models/                 # Model architecture definitions
+│   ├── bisenet.py         # BiSeNet implementation
+│   └── resnet.py          # ResNet backbone implementations
+├── utils/                  # Utility modules
+│   ├── common.py          # Common utility functions
+│   ├── dataset.py         # Dataset loading and preprocessing
+│   ├── loss.py            # Loss function definitions  
+│   ├── prepare_labels.py  # Label preparation utilities
+│   └── transform.py       # Image transformation functions
+├── assets/                 # Demo images and results
+│   ├── images/            # Sample input images
+│   ├── results/           # Sample output results
+│   └── slideshow.gif      # Demo animation
+├── weights/                # Model checkpoints (download separately)
+├── train.py               # Training script
+├── inference.py           # PyTorch inference script
+├── onnx_export.py         # PyTorch to ONNX conversion
+├── onnx_inference.py      # ONNX inference script
+├── download.sh            # Weight download script
+├── requirements.txt       # Python dependencies
+└── README.md              # This file
 ```
 
 ## Acknowledged By
 
 - The [facefusion/facefusion](https://github.com/facefusion/facefusion) (with over 20k stars) uses the main face-parsing module from this repository.
+- The [FermatResearch/BiSeNet-Cog](https://github.com/FermatResearch/BiSeNet-Cog) provides a Cog implementation for containerized deployment of this BiSeNet model.
 
 ## Contributing
 
