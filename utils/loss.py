@@ -15,7 +15,7 @@ class OhemCELoss(nn.Module):
         if loss[self.min_kept] > self.thresh:
             loss = loss[loss > self.thresh]
         else:
-            loss = loss[:self.min_kept]
+            loss = loss[: self.min_kept]
         return torch.mean(loss)
 
 

@@ -26,17 +26,17 @@ attributes = [
     'neck_l',
     'cloth',
     'hair',
-    'hat'
+    'hat',
 ]
 
 
 def process_folder(i):
     count, total = 0, 0  # Initialize count and total for each folder
-    for j in tqdm(range(i * 2000, (i + 1) * 2000), desc=f"Processing Folder {i}"):
+    for j in tqdm(range(i * 2000, (i + 1) * 2000), desc=f'Processing Folder {i}'):
         mask = np.zeros((512, 512))
         for idx, attribute in enumerate(attributes, 1):
             total += 1
-            filename = f"{str(j).zfill(5)}_{attribute}.png"
+            filename = f'{str(j).zfill(5)}_{attribute}.png'
             path = os.path.join(face_sep_mask, str(i), filename)
             if os.path.exists(path):
                 count += 1
@@ -59,7 +59,7 @@ def process_folders_with_multiprocessing(folders_to_process=15):
         count += c
         total += t
 
-    print(f"Total files processed: {count}, {total}")
+    print(f'Total files processed: {count}, {total}')
 
 
 def process_folder_default(folders_to_process=15):
@@ -72,6 +72,6 @@ def process_folder_default(folders_to_process=15):
     print(count, total)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     # process_folder_default() # without multiprocessing
     process_folders_with_multiprocessing()  # with multiprocessing

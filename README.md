@@ -119,8 +119,8 @@ This model was trained on:
 
 | Model    | PT                                                                                         | ONNX                                                                                           |
 | -------- | ------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------- |
-| ResNet18 | [resnet18.pt](https://github.com/yakhyo/face-parsing/releases/download/v0.0.1/resnet18.pt) | [resnet18.onnx](https://github.com/yakhyo/face-parsing/releases/download/v0.0.1/resnet18.onnx) |
-| ResNet34 | [resnet34.pt](https://github.com/yakhyo/face-parsing/releases/download/v0.0.1/resnet34.pt) | [resnet34.onnx](https://github.com/yakhyo/face-parsing/releases/download/v0.0.1/resnet34.onnx) |
+| ResNet18 | [resnet18.pt](https://github.com/yakhyo/face-parsing/releases/download/weights/resnet18.pt) | [resnet18.onnx](https://github.com/yakhyo/face-parsing/releases/download/weights/resnet18.onnx) |
+| ResNet34 | [resnet34.pt](https://github.com/yakhyo/face-parsing/releases/download/weights/resnet34.pt) | [resnet34.onnx](https://github.com/yakhyo/face-parsing/releases/download/weights/resnet34.onnx) |
 
 ### Training
 
@@ -229,7 +229,7 @@ Export examples:
 # Export ResNet18 model
 python onnx_export.py --model resnet18 --weight ./weights/resnet18.pt
 
-# Export ResNet34 model  
+# Export ResNet34 model
 python onnx_export.py --model resnet34 --weight ./weights/resnet34.pt
 ```
 
@@ -267,7 +267,7 @@ face-parsing/
 ├── utils/                  # Utility modules
 │   ├── common.py          # Common utility functions
 │   ├── dataset.py         # Dataset loading and preprocessing
-│   ├── loss.py            # Loss function definitions  
+│   ├── loss.py            # Loss function definitions
 │   ├── prepare_labels.py  # Label preparation utilities
 │   └── transform.py       # Image transformation functions
 ├── assets/                 # Demo images and results

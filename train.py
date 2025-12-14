@@ -17,15 +17,16 @@ from utils.transform import TrainTransform
 def parse_args():
     import argparse
 
-    parser = argparse.ArgumentParser(description="Argument Parser for Training Configuration")
+    parser = argparse.ArgumentParser(description='Argument Parser for Training Configuration')
 
     # Dataset
     parser.add_argument('--num-classes', type=int, default=19, help='Number of classes in the dataset')
     parser.add_argument('--batch-size', type=int, default=8, help='Batch size for training')
     parser.add_argument('--num-workers', type=int, default=12, help='Number of workers for data loading')
     parser.add_argument('--image-size', type=int, nargs=2, default=[448, 448], help='Size of input images')
-    parser.add_argument('--data-root', type=str, default='/mnt/d/Datasets/CelebAMask-HQ/',
-                        help='Root directory of the dataset')
+    parser.add_argument(
+        '--data-root', type=str, default='/mnt/d/Datasets/CelebAMask-HQ/', help='Root directory of the dataset'
+    )
 
     # Optimizer
     parser.add_argument('--momentum', type=float, default=0.9, help='Momentum for optimizer')
@@ -62,12 +63,11 @@ def add_weight_decay(model, weight_decay=1e-5):
     for name, param in model.named_parameters():
         if not param.requires_grad:
             continue
-        if len(param.shape) == 1 or name.endswith(".bias") or isinstance(param, nn.BatchNorm2d) or "bn" in name:
+        if len(param.shape) == 1 or name.endswith('.bias') or isinstance(param, nn.BatchNorm2d) or 'bn' in name:
             no_decay.append(param)
         else:
             decay.append(param)
-    return [{"params": no_decay, "weight_decay": 0.},
-            {"params": decay, "weight_decay": weight_decay}]
+    return [{'params': no_decay, 'weight_decay': 0.0}, {'params': decay, 'weight_decay': weight_decay}]
 
 
 def train_one_epoch(model, criterion, optimizer, data_loader, lr_scheduler, device, epoch, print_freq, scaler=None):
@@ -95,19 +95,19 @@ def train_one_epoch(model, criterion, optimizer, data_loader, lr_scheduler, devi
         batch_loss.append(loss.item())
 
         if (batch_idx + 1) % print_freq == 0:
-            lr = optimizer.param_groups[0]["lr"]
+            lr = optimizer.param_groups[0]['lr']
             print(
                 f'Train: [{epoch:>3d}][{batch_idx + 1:>4d}/{len(data_loader)}] '
                 f'Loss: {loss.item():.4f}  '
                 f'Time: {(time.time() - start_time):.3f}s '
                 f'LR: {lr:.7f} '
             )
-    print(f"Avg batch loss: {np.mean(batch_loss):.7f}")
+    print(f'Avg batch loss: {np.mean(batch_loss):.7f}')
 
 
 def main(params):
     random_seed()
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
     images_dir = os.path.join(params.data_root, 'CelebA-HQ-img')
     labels_dir = os.path.join(params.data_root, 'mask')
@@ -119,7 +119,7 @@ def main(params):
         shuffle=True,
         num_workers=params.num_workers,
         pin_memory=True,
-        drop_last=True
+        drop_last=True,
     )
 
     # model
@@ -131,8 +131,9 @@ def main(params):
 
     # optimizer
     parameters = add_weight_decay(model, params.weight_decay)
-    optimizer = torch.optim.SGD(parameters, lr=params.lr_start, momentum=params.momentum,
-                                weight_decay=params.weight_decay)
+    optimizer = torch.optim.SGD(
+        parameters, lr=params.lr_start, momentum=params.momentum, weight_decay=params.weight_decay
+    )
 
     iters_per_epoch = len(data_loader)
     lr_scheduler = PolynomialLR(
@@ -140,30 +141,22 @@ def main(params):
     )
     start_epoch = 0
     if params.resume:
-        checkpoint = torch.load(f"./weights/{params.backbone}.ckpt", map_location="cpu", weights_only=True)
-        model.load_state_dict(checkpoint["model"])
-        optimizer.load_state_dict(checkpoint["optimizer"])
-        lr_scheduler.load_state_dict(checkpoint["lr_scheduler"])
-        start_epoch = checkpoint["epoch"] + 1
+        checkpoint = torch.load(f'./weights/{params.backbone}.ckpt', map_location='cpu', weights_only=True)
+        model.load_state_dict(checkpoint['model'])
+        optimizer.load_state_dict(checkpoint['optimizer'])
+        lr_scheduler.load_state_dict(checkpoint['lr_scheduler'])
+        start_epoch = checkpoint['epoch'] + 1
 
     for epoch in range(start_epoch, params.epochs):
         train_one_epoch(
-            model,
-            criterion,
-            optimizer,
-            data_loader,
-            lr_scheduler,
-            device,
-            epoch,
-            params.print_freq,
-            scaler=None
+            model, criterion, optimizer, data_loader, lr_scheduler, device, epoch, params.print_freq, scaler=None
         )
 
         ckpt = {
-            "model": model.state_dict(),
-            "optimizer": optimizer.state_dict(),
-            "lr_scheduler": lr_scheduler.state_dict(),
-            "epoch": epoch,
+            'model': model.state_dict(),
+            'optimizer': optimizer.state_dict(),
+            'lr_scheduler': lr_scheduler.state_dict(),
+            'epoch': epoch,
         }
         torch.save(ckpt, f'./weights/{params.backbone}.ckpt')
 
@@ -172,6 +165,6 @@ def main(params):
     torch.save(state, f'./weights/{params.backbone}.pt')
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     args = parse_args()
     main(args)

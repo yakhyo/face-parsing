@@ -26,23 +26,23 @@ class BasicBlock(nn.Module):
     expansion: int = 1
 
     def __init__(
-            self,
-            in_channels: int,
-            out_channels: int,
-            stride: int = 1,
-            downsample: Optional[nn.Module] = None,
-            groups: int = 1,
-            base_width: int = 64,
-            dilation: int = 1,
-            norm_layer: Optional[Callable[..., nn.Module]] = None,
+        self,
+        in_channels: int,
+        out_channels: int,
+        stride: int = 1,
+        downsample: Optional[nn.Module] = None,
+        groups: int = 1,
+        base_width: int = 64,
+        dilation: int = 1,
+        norm_layer: Optional[Callable[..., nn.Module]] = None,
     ) -> None:
         super().__init__()
         if norm_layer is None:
             norm_layer = nn.BatchNorm2d
         if groups != 1 or base_width != 64:
-            raise ValueError("BasicBlock only supports groups=1 and base_width=64")
+            raise ValueError('BasicBlock only supports groups=1 and base_width=64')
         if dilation > 1:
-            raise NotImplementedError("Dilation > 1 not supported in BasicBlock")
+            raise NotImplementedError('Dilation > 1 not supported in BasicBlock')
         # Both self.conv1 and self.downsample layers downsample the input when stride != 1
         self.conv1 = conv3x3(in_channels, out_channels, stride)
         self.bn1 = norm_layer(out_channels)
@@ -73,14 +73,14 @@ class BasicBlock(nn.Module):
 
 class ResNet(nn.Module):
     def __init__(
-            self,
-            block: Type[BasicBlock],
-            layers: List[int],
-            num_classes: int = 1000,
-            groups: int = 1,
-            width_per_group: int = 64,
-            replace_stride_with_dilation: Optional[List[bool]] = None,
-            norm_layer: Optional[Callable[..., nn.Module]] = None,
+        self,
+        block: Type[BasicBlock],
+        layers: List[int],
+        num_classes: int = 1000,
+        groups: int = 1,
+        width_per_group: int = 64,
+        replace_stride_with_dilation: Optional[List[bool]] = None,
+        norm_layer: Optional[Callable[..., nn.Module]] = None,
     ) -> None:
         super().__init__()
         if norm_layer is None:
@@ -95,8 +95,7 @@ class ResNet(nn.Module):
             replace_stride_with_dilation = [False, False, False]
         if len(replace_stride_with_dilation) != 3:
             raise ValueError(
-                "replace_stride_with_dilation should be None "
-                f"or a 3-element tuple, got {replace_stride_with_dilation}"
+                f'replace_stride_with_dilation should be None or a 3-element tuple, got {replace_stride_with_dilation}'
             )
         self.groups = groups
         self.base_width = width_per_group
@@ -113,18 +112,18 @@ class ResNet(nn.Module):
 
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
-                nn.init.kaiming_normal_(m.weight, mode="fan_out", nonlinearity="relu")
+                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
             elif isinstance(m, (nn.BatchNorm2d, nn.GroupNorm)):
                 nn.init.constant_(m.weight, 1)
                 nn.init.constant_(m.bias, 0)
 
     def _make_layer(
-            self,
-            block: Type[BasicBlock],
-            planes: int,
-            blocks: int,
-            stride: int = 1,
-            dilate: bool = False,
+        self,
+        block: Type[BasicBlock],
+        planes: int,
+        blocks: int,
+        stride: int = 1,
+        dilate: bool = False,
     ) -> nn.Sequential:
         norm_layer = self._norm_layer
         downsample = None
@@ -148,7 +147,7 @@ class ResNet(nn.Module):
                 self.groups,
                 self.base_width,
                 previous_dilation,
-                norm_layer
+                norm_layer,
             )
         )
         self.in_channels = planes * block.expansion
@@ -184,11 +183,11 @@ class ResNet(nn.Module):
 
 
 def _resnet(
-        block: Type[BasicBlock],
-        layers: List[int],
-        weights: Optional[ResNet34_Weights],
-        progress: bool,
-        **kwargs: Any,
+    block: Type[BasicBlock],
+    layers: List[int],
+    weights: Optional[ResNet34_Weights],
+    progress: bool,
+    **kwargs: Any,
 ) -> ResNet:
     model = ResNet(block, layers, **kwargs)
 
@@ -199,10 +198,7 @@ def _resnet(
 
 
 def resnet18(
-        *,
-        weights: Optional[ResNet18_Weights] = ResNet18_Weights.DEFAULT,
-        progress: bool = True,
-        **kwargs: Any
+    *, weights: Optional[ResNet18_Weights] = ResNet18_Weights.DEFAULT, progress: bool = True, **kwargs: Any
 ) -> ResNet:
     weights = ResNet18_Weights.verify(weights)
 
@@ -210,9 +206,7 @@ def resnet18(
 
 
 def resnet34(
-        *, weights: Optional[ResNet34_Weights] = ResNet34_Weights.DEFAULT,
-        progress: bool = True,
-        **kwargs: Any
+    *, weights: Optional[ResNet34_Weights] = ResNet34_Weights.DEFAULT, progress: bool = True, **kwargs: Any
 ) -> ResNet:
     weights = ResNet34_Weights.verify(weights)
 

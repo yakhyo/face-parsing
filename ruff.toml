@@ -1,0 +1,28 @@
+line-length = 120
+target-version = "py310"
+exclude = [
+    ".git",
+    ".ruff_cache",
+    "__pycache__",
+    "build",
+    "dist",
+    "*.egg-info",
+    ".venv",
+    "venv",
+    ".pytest_cache",
+    ".mypy_cache",
+    "*.ipynb",
+]
+
+[format]
+quote-style = "single"
+
+[lint]
+select = ["E", "F", "I", "W"]
+
+[lint.flake8-quotes]
+docstring-quotes = "double"
+
+[lint.isort]
+known-first-party = ["models", "utils"]
+

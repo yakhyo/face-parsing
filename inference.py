@@ -34,10 +34,12 @@ def prepare_image(image: Image.Image, input_size: Tuple[int, int] = (512, 512)) 
     resized_image = image.resize(input_size, resample=Image.BILINEAR)
 
     # Define transformation pipeline
-    transform = transforms.Compose([
-        transforms.ToTensor(),
-        transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225)),
-    ])
+    transform = transforms.Compose(
+        [
+            transforms.ToTensor(),
+            transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225)),
+        ]
+    )
 
     # Apply transformations
     image_tensor = transform(resized_image)
@@ -65,7 +67,7 @@ def load_model(model_name: str, num_classes: int, weight_path: str, device: torc
     if os.path.exists(weight_path):
         model.load_state_dict(torch.load(weight_path, map_location=device))
     else:
-        raise ValueError(f"Weights not found from given path ({weight_path})")
+        raise ValueError(f'Weights not found from given path ({weight_path})')
 
     model.eval()
     return model
@@ -103,33 +105,33 @@ def inference(params: argparse.Namespace) -> None:
     output_path = os.path.join(params.output, params.model)
     os.makedirs(output_path, exist_ok=True)
 
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    logger.info(f"Using device: {device}")
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    logger.info(f'Using device: {device}')
 
     num_classes = 19  # Number of face parsing classes
 
     # Load the model
     try:
         model = load_model(params.model, num_classes, params.weight, device)
-        logger.info(f"Model loaded successfully: {params.model}")
+        logger.info(f'Model loaded successfully: {params.model}')
     except Exception as e:
-        logger.error(f"Failed to load model: {e}")
+        logger.error(f'Failed to load model: {e}')
         return
 
     # Get list of files to process
     files_to_process = get_files_to_process(params.input)
-    logger.info(f"Found {len(files_to_process)} files to process")
+    logger.info(f'Found {len(files_to_process)} files to process')
 
     # Process each file
-    for file_path in tqdm(files_to_process, desc="Processing images"):
+    for file_path in tqdm(files_to_process, desc='Processing images'):
         filename = os.path.basename(file_path)
         root_ext_pair = os.path.splitext(filename)
-        save_raw_path = os.path.join(output_path, root_ext_pair[0] + "_raw.png")
+        save_raw_path = os.path.join(output_path, root_ext_pair[0] + '_raw.png')
         save_path = os.path.join(output_path, filename)
 
         try:
             # Load and process the image
-            image = Image.open(file_path).convert("RGB")
+            image = Image.open(file_path).convert('RGB')
 
             # Store original image resolution
             original_size = image.size  # (width, height)
@@ -162,10 +164,10 @@ def inference(params: argparse.Namespace) -> None:
             )
 
         except Exception as e:
-            logger.error(f"Error processing {file_path}: {e}")
+            logger.error(f'Error processing {file_path}: {e}')
             continue
 
-    logger.info(f"Processing complete. Results saved to {output_path}")
+    logger.info(f'Processing complete. Results saved to {output_path}')
 
 
 def parse_args() -> argparse.Namespace:
@@ -175,31 +177,28 @@ def parse_args() -> argparse.Namespace:
     Returns:
         argparse.Namespace: Validated command line arguments
     """
-    parser = argparse.ArgumentParser(description="Face parsing inference")
+    parser = argparse.ArgumentParser(description='Face parsing inference')
     parser.add_argument(
-        "--model",
+        '--model',
         type=str,
-        default="resnet18",
-        choices=["resnet18", "resnet34"],
-        help="model name, i.e resnet18, resnet34"
+        default='resnet18',
+        choices=['resnet18', 'resnet34'],
+        help='model name, i.e resnet18, resnet34',
     )
     parser.add_argument(
-        "--weight",
-        type=str,
-        default="./weights/resnet18.pt",
-        help="path to trained model, i.e resnet18/34"
+        '--weight', type=str, default='./weights/resnet18.pt', help='path to trained model, i.e resnet18/34'
     )
-    parser.add_argument("--input", type=str, default="./assets/images/", help="path to an image or a folder of images")
-    parser.add_argument("--output", type=str, default="./assets/results", help="path to save model outputs")
+    parser.add_argument('--input', type=str, default='./assets/images/', help='path to an image or a folder of images')
+    parser.add_argument('--output', type=str, default='./assets/results', help='path to save model outputs')
 
     args = parser.parse_args()
 
     # Validate arguments
     if not os.path.exists(args.input):
-        raise ValueError(f"Input path does not exist: {args.input}")
+        raise ValueError(f'Input path does not exist: {args.input}')
 
     if not os.path.exists(os.path.dirname(args.weight)):
-        logger.warning(f"Weight directory does not exist: {os.path.dirname(args.weight)}")
+        logger.warning(f'Weight directory does not exist: {os.path.dirname(args.weight)}')
 
     return args
 
@@ -210,9 +209,9 @@ def main() -> None:
         args = parse_args()
         inference(params=args)
     except Exception as e:
-        logger.error(f"An error occurred: {e}")
+        logger.error(f'An error occurred: {e}')
         raise
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()

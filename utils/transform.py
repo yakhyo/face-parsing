@@ -3,7 +3,7 @@ import numpy as np
 from PIL import Image, ImageEnhance
 from torchvision.transforms import functional as F
 
-__all__ = ["TrainTransform", "DefaultTransform"]
+__all__ = ['TrainTransform', 'DefaultTransform']
 
 
 class RandomCrop:
@@ -11,7 +11,7 @@ class RandomCrop:
         self.size = size
 
     def __call__(self, image, target):
-        assert image.size == target.size, "Image and target size mismatch"
+        assert image.size == target.size, 'Image and target size mismatch'
 
         crop_width, crop_height = self.size
         width, height = image.size
@@ -58,7 +58,7 @@ class HorizontalFlip:
             np_target_flipped = np_target.copy()
 
             for src, dst in label_swaps.items():
-                np_target_flipped[np_target == src] = dst 
+                np_target_flipped[np_target == src] = dst
 
             target = Image.fromarray(np_target_flipped)
 
@@ -95,7 +95,6 @@ class ColorJitter:
             self.saturation = [max(1 - saturation, 0), 1 + saturation]
 
     def __call__(self, image, target):
-
         brightness = random.uniform(self.brightness[0], self.brightness[1])
         contrast = random.uniform(self.contrast[0], self.contrast[1])
         saturation = random.uniform(self.saturation[0], self.saturation[1])
@@ -135,14 +134,16 @@ class Compose:
 
 class TrainTransform:
     def __init__(self, image_size):
-        self.transform = Compose([
-            ColorJitter(brightness=0.5, contrast=0.5, saturation=0.5),
-            HorizontalFlip(p=0.5),
-            RandomScale([0.75, 1.0, 1.25, 1.5, 1.75, 2.0]),
-            RandomCrop(image_size),
-            ToTensor(),
-            Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225)),
-        ])
+        self.transform = Compose(
+            [
+                ColorJitter(brightness=0.5, contrast=0.5, saturation=0.5),
+                HorizontalFlip(p=0.5),
+                RandomScale([0.75, 1.0, 1.25, 1.5, 1.75, 2.0]),
+                RandomCrop(image_size),
+                ToTensor(),
+                Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225)),
+            ]
+        )
 
     def __call__(self, image, label):
         return self.transform(image, label)
@@ -150,10 +151,7 @@ class TrainTransform:
 
 class DefaultTransform:
     def __init__(self):
-        self.transform = Compose([
-            ToTensor(),
-            Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225))
-        ])
+        self.transform = Compose([ToTensor(), Normalize(mean=(0.485, 0.456, 0.406), std=(0.229, 0.224, 0.225))])
 
     def __call__(self, image, label):
         return self.transform(image, label)

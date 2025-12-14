@@ -21,7 +21,7 @@ class CelebAMaskHQ(Dataset):
         self.label_files = []
         for filename in [x for x in os.listdir(self.images_dir) if os.path.splitext(x)[1] in ('.jpg', '.jpeg', '.png')]:
             image_path = os.path.join(self.images_dir, filename)
-            label_path = os.path.join(self.labels_dir, f"{filename[:-4]}.png")
+            label_path = os.path.join(self.labels_dir, f'{filename[:-4]}.png')
 
             if os.path.isfile(image_path) and os.path.isfile(label_path):
                 self.image_files.append(image_path)
@@ -35,7 +35,6 @@ class CelebAMaskHQ(Dataset):
         return len(self.image_files)
 
     def __getitem__(self, idx: int):
-
         image_path = self.image_files[idx]
         label_path = self.label_files[idx]
 
