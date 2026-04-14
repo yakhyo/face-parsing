@@ -2,4 +2,4 @@ torch==2.2.2
 torchvision==0.17.2
 tqdm==4.66.3
 opencv-python==4.9.0.80
-pillow==12.1.1
+pillow==12.2.0
