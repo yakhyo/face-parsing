@@ -1,5 +1,8 @@
-torch==2.2.2
-torchvision==0.17.2
-tqdm==4.66.3
-opencv-python==4.9.0.80
-pillow==12.1.1
+torch==2.14.1
+torchvision==0.29.1
+tqdm==4.70.1
+opencv-python==4.14.0.94
+pillow==13.0.0
+onnx==1.23.2
+onnxscript==0.7.2
+onnxruntime==1.31.0

@@ -83,7 +83,7 @@ facial landmarks.
 
 ## Installation
 
-To get started with the Face Parsing Model, clone this repository and install the required dependencies:
+To get started with the Face Parsing Model, clone this repository and install the required dependencies (Python 3.11 or newer):
 
 ```bash
 git clone https://github.com/yakhyo/face-parsing.git
