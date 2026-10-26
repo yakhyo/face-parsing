@@ -9,7 +9,7 @@ def torch2onnx_export(params):
     num_classes = 19
 
     model = BiSeNet(num_classes, backbone_name=params.model)
-    model.load_state_dict(torch.load(params.weight))
+    model.load_state_dict(torch.load(params.weight, map_location='cpu'))
     model.eval()
 
     onnx_model_path = params.weight.replace('.pt', '.onnx')
@@ -23,6 +23,7 @@ def torch2onnx_export(params):
         onnx_model_path,
         export_params=True,
         opset_version=20,  # the ONNX version to export the model to
+        external_data=False,  # keep the weights inside the .onnx file
         do_constant_folding=True,
         input_names=['input'],
         output_names=['output'],
