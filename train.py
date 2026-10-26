@@ -78,7 +78,7 @@ def train_one_epoch(model, criterion, optimizer, data_loader, lr_scheduler, devi
         image = image.to(device)
         target = target.to(device)
 
-        with torch.cuda.amp.autocast(enabled=scaler is not None):
+        with torch.amp.autocast('cuda', enabled=scaler is not None):
             output = model(image)
             loss = criterion(output, target)
 
